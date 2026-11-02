@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>體育課期中考成績比例試算與反思</title>
+  <title>大一體育（音樂系）期中成績試算與反思</title>
+  <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -20,20 +21,17 @@
     <div class="max-w-4xl mx-auto px-4 py-6 flex justify-between items-center">
       <div>
         <h1 class="text-2xl font-bold flex items-center gap-2">
-          <i class="fa-solid font-award fa-dumbbell"></i>
+          <i class="fa-solid fa-award"></i>
           大一體育（音樂系）期中成績試算
         </h1>
         <p class="text-emerald-100 text-sm mt-1">自主選擇學習採計比例與心得反思</p>
       </div>
-      <button onclick="toggleModal('sheetModal')" class="bg-emerald-800 hover:bg-emerald-900 text-emerald-100 text-xs px-3 py-2 rounded-lg border border-emerald-600 flex items-center gap-1 transition">
-        <i class="fa-solid fa-table"></i> 串接 Google 表格說明
-      </button>
     </div>
   </header>
 
   <main class="max-w-4xl mx-auto px-4 space-y-6">
 
-    <!-- Step 1: 學號輸入與資料驗證 -->
+    <!-- Step 1: 學號查詢 -->
     <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
       <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
         <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 text-xs flex items-center justify-center font-bold">1</span>
@@ -59,7 +57,7 @@
     <section id="step2Section" class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 opacity-50 pointer-events-none transition-all">
       <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
         <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 text-xs flex items-center justify-center font-bold">2</span>
-        輸入今日籃球測驗成績與選擇加權比例
+        輸入籃球測驗成績與選擇加權比例
       </h2>
 
       <div class="mb-6">
@@ -115,9 +113,9 @@
       <div class="space-y-4">
         <div>
           <label class="block text-sm font-medium text-slate-600 mb-1">請說明選擇此比例配置的理由與自我反思：</label>
-          <textarea id="reflectionText" rows="4" placeholder="例如：因為我在羽球發球項目發揮較為穩定取得相對高分，因此選擇羽球 80% 的比例來展現個人優勢；籃球部分雖然尚有提升空間，但我會在後半學期加強罰球精準度..." class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"></textarea>
+          <textarea id="reflectionText" rows="4" placeholder="例如：因為我在羽球發球項目發揮較為穩定取得相對高分，因此選擇羽球 80% 的比例來展現個人優勢..." class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none text-sm"></textarea>
         </div>
-        <button onclick="submitForm()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition shadow-md flex items-center justify-center gap-2">
+        <button onclick="submitForm()" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl transition shadow-md flex items-center justify-center gap-2">
           <i class="fa-solid fa-paper-plane"></i> 確認送出成績配置表
         </button>
       </div>
@@ -125,45 +123,11 @@
 
   </main>
 
-  <!-- Modal: Google Apps Script 說明 -->
-  <div id="sheetModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-xl max-h-[85vh] overflow-y-auto">
-      <div class="flex justify-between items-center mb-4 border-b pb-3">
-        <h3 class="text-lg font-bold text-slate-800">串接 Google Sheets 說明</h3>
-        <button onclick="toggleModal('sheetModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-      </div>
-      <div class="space-y-4 text-sm text-slate-600">
-        <p>如欲讓學生填寫後直接寫入 Google 試算表，請按照以下步驟操作：</p>
-        <ol class="list-decimal pl-5 space-y-2">
-          <li>開啟您的 Google Sheet 試算表，點選選單「<strong>擴充功能</strong>」&gt;「<strong>Apps Script</strong>」。</li>
-          <li>貼上以下程式碼並存檔：</li>
-        </ol>
-        <pre class="bg-slate-900 text-slate-100 p-3 rounded-lg text-xs overflow-x-auto">function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = JSON.parse(e.postData.contents);
-  sheet.appendRow([
-    new Date(),
-    data.studentId,
-    data.name,
-    data.badminton,
-    data.basketball,
-    data.selectedRatio,
-    data.finalScore,
-    data.reflection
-  ]);
-  return ContentService.createTextOutput("Success");
-}</pre>
-        <ol start="3" class="list-decimal pl-5 space-y-2">
-          <li>點選右上角「<strong>部署</strong>」&gt;「<strong>瞭解新部署</strong>」，選擇類型為「Web 應用程式」。</li>
-          <li>將「誰有權存取」設定為「<strong>任何人 (Anyone)</strong>」，並完成部署。</li>
-          <li>複製取得的 Webhook 網址即可進行串接。</li>
-        </ol>
-      </div>
-    </div>
-  </div>
-
   <script>
-    // 音樂系 30 位同學真實資料庫
+    // 您已建立好的 Google Apps Script 部署網址
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzclWsyCQKJ9l9Oj5rHH7IQFWB6LN2v1dyu8Ib6NvApsIfD0mbRLg4DULPhpJ9rq5k/exec";
+
+    // 音樂系 30 位同學真實資料庫 (來自 Excel)
     const studentDb = [
       { id: "1144826", name: "蔡宇恩", badminton: null },
       { id: "1154171", name: "讓可昀", badminton: 83 },
@@ -291,14 +255,9 @@
       document.getElementById('step3Section').classList.add('opacity-50', 'pointer-events-none');
     }
 
-    function toggleModal(id) {
-      const modal = document.getElementById(id);
-      modal.classList.toggle('hidden');
-    }
-
-    function submitForm() {
+    async function submitForm() {
       if (!currentStudent) {
-        alert('請先輸入學號！');
+        alert('請先輸入學號並完成查詢！');
         return;
       }
       if (!selectedOpt) {
@@ -312,7 +271,46 @@
       }
 
       const ratioNames = { 'A': '羽80%-籃20%', 'B': '羽20%-籃80%', 'C': '羽50%-籃50%' };
-      alert(`【提交成功！】\n學號：${currentStudent.id}\n姓名：${currentStudent.name}\n選擇方案：${ratioNames[selectedOpt]}\n心得：${reflection}`);
+      const basketball = parseFloat(document.getElementById('basketballScore').value) || 0;
+      const badminton = currentStudent.badminton || 0;
+      
+      let finalScore = 0;
+      if (selectedOpt === 'A') finalScore = (badminton * 0.8 + basketball * 0.2).toFixed(1);
+      if (selectedOpt === 'B') finalScore = (badminton * 0.2 + basketball * 0.8).toFixed(1);
+      if (selectedOpt === 'C') finalScore = (badminton * 0.5 + basketball * 0.5).toFixed(1);
+
+      const payload = {
+        studentId: currentStudent.id,
+        name: currentStudent.name,
+        badminton: badminton,
+        basketball: basketball,
+        selectedRatio: ratioNames[selectedOpt],
+        finalScore: finalScore,
+        reflection: reflection
+      };
+
+      const btn = document.getElementById('submitBtn');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 資料寫入 Google Sheet 中...`;
+
+      try {
+        await fetch(WEB_APP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        alert(`【提交成功！】\n資料已成功傳送至 Google 試算表！\n\n學生：${currentStudent.name} (${currentStudent.id})\n選擇方案：${ratioNames[selectedOpt]}\n試算總分：${finalScore} 分`);
+        document.getElementById('reflectionText').value = '';
+      } catch (error) {
+        console.error('Submission Error:', error);
+        alert('傳送失敗，請檢查網路連線或稍後再試！');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
     }
   </script>
 </body>
